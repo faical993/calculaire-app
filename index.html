@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculaire — Calculateur de surface GPS, AR & Satellite</title>
+  <meta name="description" content="Calculaire mesure la surface de n'importe quel terrain en quelques secondes grâce au GPS, à la réalité augmentée et aux cartes satellite. Gratuit sur Android." />
+  <meta name="theme-color" content="#1A3D26" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Calculaire — Calculateur de surface" />
+  <meta property="og:description" content="Mesurez la surface de vos terrains avec le GPS, l'AR ou la carte satellite." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark: #0F2417;
+      --green: #1A3D26;
+      --green-mid: #2D6A4F;
+      --green-light: #52B788;
+      --accent: #4ECDC4;
+      --gold: #FBBF24;
+      --white: #FFFFFF;
+      --grey-50: #F9FAFB;
+      --grey-100: #F3F4F6;
+      --grey-300: #D1D5DB;
+      --grey-500: #6B7280;
+      --grey-700: #374151;
+      --grey-900: #111827;
+      --radius: 16px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--grey-900);
+      line-height: 1.6;
+    }
+    /* ── NAVIGATION ─────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15, 36, 23, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-logo {
+      font-size: 20px; font-weight: 800; color: var(--white);
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.7); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    /* ── HERO ───────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 50%, #1B4332 100%);
+      padding: 100px 24px 80px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(78,205,196,0.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 80%, rgba(82,183,136,0.1) 0%, transparent 60%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(78,205,196,0.15);
+      border: 1px solid rgba(78,205,196,0.3);
+      border-radius: 100px;
+      padding: 6px 16px;
+      color: var(--accent);
+      font-size: 13px; font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900; color: var(--white);
+      line-height: 1.1; letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-sub {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: rgba(255,255,255,0.7);
+      max-width: 560px; margin: 0 auto 40px;
+      font-weight: 400;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--accent);
+      color: var(--green-dark);
+      text-decoration: none;
+      padding: 16px 32px;
+      border-radius: 100px;
+      font-size: 16px; font-weight: 800;
+      letter-spacing: 0.3px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(78,205,196,0.4);
+    }
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(78,205,196,0.5);
+    }
+    .hero-cta svg { width: 20px; height: 20px; }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 48px;
+      margin-top: 60px; flex-wrap: wrap;
+      position: relative;
+    }
+    .stat { text-align: center; }
+    .stat-value {
+      font-size: 28px; font-weight: 900; color: var(--white);
+      display: block;
+    }
+    .stat-label {
+      font-size: 13px; color: rgba(255,255,255,0.5);
+      font-weight: 500;
+    }
+    /* ── SECTION GÉNÉRIQUE ─────────────────────────────────────── */
+    section { padding: 80px 24px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .section-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      color: var(--green-mid); text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800; color: var(--grey-900);
+      line-height: 1.2; letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--grey-500);
+      max-width: 560px;
+    }
+    /* ── MODES ─────────────────────────────────────────────────── */
+    #modes { background: var(--grey-50); }
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px; margin-top: 48px;
+    }
+    .mode-card {
+      background: var(--white);
+      border: 1px solid var(--grey-100);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .mode-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+    .mode-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .mode-icon.gps { background: rgba(34,197,94,0.12); }
+    .mode-icon.ar  { background: rgba(78,205,196,0.12); }
+    .mode-icon.sat { background: rgba(251,191,36,0.12); }
+    .mode-card h3 {
+      font-size: 18px; font-weight: 700; color: var(--grey-900);
+      margin-bottom: 10px;
+    }
+    .mode-card p { font-size: 14px; color: var(--grey-500); line-height: 1.6; }
+    .mode-tag {
+      display: inline-block; margin-top: 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      padding: 4px 10px; border-radius: 100px;
+      text-transform: uppercase;
+    }
+    .mode-tag.gps { background: rgba(34,197,94,0.1); color: #16A34A; }
+    .mode-tag.ar  { background: rgba(78,205,196,0.12); color: #0E9F98; }
+    .mode-tag.sat { background: rgba(251,191,36,0.12); color: #D97706; }
+    /* ── PRICING ───────────────────────────────────────────────── */
+    #pricing { background: var(--white); }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px; margin-top: 48px;
+    }
+    .plan-card {
+      border: 1.5px solid var(--grey-100);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      position: relative;
+    }
+    .plan-card.featured {
+      border-color: var(--green-mid);
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+      color: var(--white);
+    }
+    .plan-badge {
+      position: absolute; top: -12px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold);
+      color: var(--green-dark);
+      font-size: 11px; font-weight: 800; letter-spacing: 1px;
+      padding: 4px 14px; border-radius: 100px;
+      text-transform: uppercase;
+    }
+    .plan-name { font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--grey-500); margin-bottom: 8px; }
+    .plan-card.featured .plan-name { color: rgba(255,255,255,0.6); }
+    .plan-price {
+      font-size: 40px; font-weight: 900; color: var(--grey-900);
+      line-height: 1; margin-bottom: 4px;
+    }
+    .plan-price sup { font-size: 20px; vertical-align: super; font-weight: 700; }
+    .plan-card.featured .plan-price { color: var(--white); }
+    .plan-desc {
+      font-size: 13px; color: var(--grey-500);
+      margin-bottom: 24px;
+    }
+    .plan-card.featured .plan-desc { color: rgba(255,255,255,0.6); }
+    .plan-features { list-style: none; }
+    .plan-features li {
+      font-size: 14px; color: var(--grey-700);
+      padding: 6px 0; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .plan-card.featured .plan-features li { color: rgba(255,255,255,0.85); }
+    .plan-features li::before { content: '✓'; color: var(--green-light); font-weight: 800; flex-shrink: 0; }
+    .plan-card.featured .plan-features li::before { color: var(--accent); }
+    /* ── PRIVACY ───────────────────────────────────────────────── */
+    #privacy { background: var(--grey-50); }
+    .privacy-box {
+      background: var(--white);
+      border: 1px solid var(--grey-100);
+      border-radius: var(--radius);
+      padding: 40px; margin-top: 40px;
+    }
+    .privacy-box h3 {
+      font-size: 18px; font-weight: 700; color: var(--grey-900);
+      margin: 24px 0 10px;
+    }
+    .privacy-box h3:first-child { margin-top: 0; }
+    .privacy-box p, .privacy-box li {
+      font-size: 14px; color: var(--grey-700); line-height: 1.7;
+    }
+    .privacy-box ul { padding-left: 20px; margin-top: 8px; }
+    .privacy-box li { margin-bottom: 4px; }
+    /* ── CONTACT ───────────────────────────────────────────────── */
+    #contact { background: var(--white); text-align: center; }
+    .contact-card {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+      border-radius: 24px;
+      padding: 60px 40px;
+      margin-top: 40px;
+    }
+    .contact-card h2 {
+      font-size: 28px; font-weight: 800; color: var(--white);
+      margin-bottom: 12px;
+    }
+    .contact-card p { color: rgba(255,255,255,0.7); margin-bottom: 32px; font-size: 16px; }
+    .btn-contact {
+      display: inline-block;
+      background: var(--accent); color: var(--green-dark);
+      padding: 14px 32px; border-radius: 100px;
+      text-decoration: none; font-size: 15px; font-weight: 800;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-contact:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(78,205,196,0.4);
+    }
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--green-dark);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .footer-logo { font-size: 22px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 20px; }
+    .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero { padding: 80px 20px 60px; }
+      .hero-stats { gap: 32px; }
+      section { padding: 60px 20px; }
+      .privacy-box { padding: 24px; }
+      .contact-card { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+<!-- ── NAVIGATION ─────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">Calcul<span>-Aire</span></div>
+  <ul class="nav-links">
+    <li><a href="#modes">Fonctionnalités</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+    <li><a href="#privacy">Confidentialité</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+<!-- ── HERO ───────────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+    </svg>
+    Application Android
+  </div>
+  <h1>Mesurez vos terrains<br/>avec précision<br/><span>où que vous soyez</span></h1>
+  <p class="hero-sub">GPS, Réalité Augmentée ou Carte Satellite — Calculaire mesure la surface de n'importe quel terrain en quelques secondes.</p>
+  <a href="https://play.google.com/store/apps/details?id=com.terrainmesure.app" class="hero-cta" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 20.5v-17c0-.83 1-1.29 1.6-.75l15 8.5c.53.3.53 1.2 0 1.5l-15 8.5c-.6.54-1.6.08-1.6-.75z"/>
+    </svg>
+    Télécharger sur Google Play
+  </a>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-value">3</span>
+      <span class="stat-label">Modes de mesure</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">6</span>
+      <span class="stat-label">Mesures gratuites</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">10+</span>
+      <span class="stat-label">Unités disponibles</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">3</span>
+      <span class="stat-label">Langues supportées</span>
+    </div>
+  </div>
+</header>
+<!-- ── MODES ──────────────────────────────────────────────────────── -->
+<section id="modes">
+  <div class="container">
+    <p class="section-label">Fonctionnalités</p>
+    <h2 class="section-title">Trois méthodes de mesure</h2>
+    <p class="section-sub">Choisissez la méthode adaptée à votre contexte : sur le terrain, en déplacement ou depuis votre bureau.</p>
+    <div class="modes-grid">
+      <div class="mode-card">
+        <div class="mode-icon gps">🛰️</div>
+        <h3>Mode GPS</h3>
+        <p>Marchez autour du périmètre de votre terrain et ajoutez un point à chaque angle. L'application calcule instantanément la surface grâce à votre position GPS.</p>
+        <span class="mode-tag gps">Sur le terrain</span>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon ar">📷</div>
+        <h3>Mode Réalité Augmentée</h3>
+        <p>Pointez l'appareil photo vers les angles de votre espace. Idéal pour mesurer des surfaces intérieures, des parcelles ou des petites zones.</p>
+        <span class="mode-tag ar">Caméra & capteurs</span>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon sat">🗺️</div>
+        <h3>Mode Satellite</h3>
+        <p>Délimitez votre parcelle directement sur la carte satellite avec une précision centimétrique. Parfait pour planifier depuis votre bureau.</p>
+        <span class="mode-tag sat">Carte satellite</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ── PRICING ─────────────────────────────────────────────────────── -->
+<section id="pricing">
+  <div class="container">
+    <p class="section-label">Tarifs</p>
+    <h2 class="section-title">Simple et transparent</h2>
+    <p class="section-sub">Commencez gratuitement. Débloquez plus selon vos besoins.</p>
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <p class="plan-name">Gratuit</p>
+        <p class="plan-price"><sup></sup>0 <span style="font-size:16px;font-weight:500;color:#6B7280">€</span></p>
+        <p class="plan-desc">Pour découvrir l'application</p>
+        <ul class="plan-features">
+          <li>6 mesures gratuites à vie</li>
+          <li>Historique complet</li>
+          <li>3 modes de mesure</li>
+          <li>Export PDF (avec pub)</li>
+          <li>Toutes les unités</li>
+        </ul>
+      </div>
+      <div class="plan-card">
+        <p class="plan-name">Pack Crédits</p>
+        <p class="plan-price"><sup></sup>0,99 <span style="font-size:16px;font-weight:500;color:#6B7280">€</span></p>
+        <p class="plan-desc">50 mesures supplémentaires</p>
+        <ul class="plan-features">
+          <li>+50 mesures sans pub</li>
+          <li>Consommable et renouvelable</li>
+          <li>Export PDF inclus</li>
+          <li>Idéal pour usage ponctuel</li>
+        </ul>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-badge">⭐ Recommandé</div>
+        <p class="plan-name">Premium</p>
+        <p class="plan-price"><sup></sup>4,99 <span style="font-size:16px;font-weight:500;color:rgba(255,255,255,0.5)">€</span></p>
+        <p class="plan-desc">Achat unique — à vie</p>
+        <ul class="plan-features">
+          <li>Mesures illimitées</li>
+          <li>Zéro publicité</li>
+          <li>Export PDF illimité</li>
+          <li>Partage & rapport complet</li>
+          <li>Toutes les fonctionnalités</li>
+          <li>Mises à jour incluses</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ── POLITIQUE DE CONFIDENTIALITÉ ───────────────────────────────── -->
+<section id="privacy">
+  <div class="container">
+    <p class="section-label">Légal</p>
+    <h2 class="section-title">Politique de confidentialité</h2>
+    <p class="section-sub">Dernière mise à jour : octobre 2026</p>
+    <div class="privacy-box">
+      <h3>1. Collecte de données</h3>
+      <p>L'application Calculaire collecte les types de données suivants :</p>
+      <ul>
+        <li><strong>Données de localisation (GPS)</strong> : utilisées uniquement pour calculer la surface de votre terrain. Elles ne sont jamais transmises à nos serveurs ni à des tiers.</li>
+        <li><strong>Données de caméra</strong> : utilisées uniquement en mode AR (Réalité Augmentée) pour détecter les angles de votre espace. Aucune image ou vidéo n'est enregistrée ou transmise.</li>
+        <li><strong>Préférences de l'application</strong> : langue, thème, statut Premium — stockées localement sur votre appareil via SharedPreferences.</li>
+        <li><strong>Historique des terrains</strong> : stocké localement sur votre appareil (base Hive). Aucune donnée n'est synchronisée dans le cloud.</li>
+      </ul>
+      <h3>2. Publicités (Google AdMob)</h3>
+      <p>L'application affiche des publicités via <strong>Google AdMob</strong> pour les utilisateurs non-Premium. AdMob peut collecter des données anonymisées pour personnaliser les publicités conformément à sa propre politique de confidentialité disponible sur <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">https://policies.google.com/privacy</a>.</p>
+      <h3>3. Achats in-app</h3>
+      <p>Les achats in-app (Premium et Pack Crédits) sont traités par <strong>Google Play Billing</strong>. Aucune information de paiement n'est traitée directement par l'application. Consultez la politique de Google Play pour plus d'informations.</p>
+      <h3>4. Partage des données</h3>
+      <p>Nous ne vendons, ne partageons ni ne transférons vos données personnelles à des tiers, à l'exception de Google AdMob pour la diffusion de publicités conformément à leurs conditions d'utilisation.</p>
+      <h3>5. Sécurité</h3>
+      <p>Toutes vos données de mesure et préférences sont stockées localement sur votre appareil. Nous n'hébergeons aucune base de données utilisateur.</p>
+      <h3>6. Droits des utilisateurs</h3>
+      <p>Vous pouvez à tout moment supprimer toutes les données de l'application en désinstallant Calculaire de votre appareil. Pour toute question relative à la confidentialité, contactez-nous à l'adresse ci-dessous.</p>
+      <h3>7. Contact</h3>
+      <p>Pour toute question concernant cette politique de confidentialité, contactez-nous à : <strong>support.calculaire@gmail.com</strong></p>
+    </div>
+  </div>
+</section>
+<!-- ── CONTACT ──────────────────────────────────────────────────────── -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-card">
+      <h2>Une question ? Un problème ?</h2>
+      <p>Notre équipe vous répond dans les 48 heures.</p>
+      <a href="mailto:support.calculaire@gmail.com" class="btn-contact">
+        ✉️ Nous contacter
+      </a>
+    </div>
+  </div>
+</section>
+<!-- ── FOOTER ────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-logo">Calcul<span>-Aire</span></div>
+  <div class="footer-links">
+    <a href="#modes">Fonctionnalités</a>
+    <a href="#pricing">Tarifs</a>
+    <a href="#privacy">Confidentialité</a>
+    <a href="#contact">Contact</a>
+    <a href="https://play.google.com/store/apps/details?id=com.terrainmesure.app" target="_blank" rel="noopener">Google Play</a>
+  </div>
+  <p class="footer-copy">© 2026 Calculaire. Tous droits réservés.</p>
+</footer>
+</body>
+</html>
